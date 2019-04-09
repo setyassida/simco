@@ -130,7 +130,7 @@
         <h1 class="h3 mb-4 text-gray-800 text-center">Hubungan dengan Peraturan Direksi Lain</h1>
 
 
-        <div class="form-group row">
+        <div class="form-group row" id="div_relation">
           <div class="col-md-4">
 
           </div>
@@ -148,6 +148,9 @@
               <option value="{{ $perdir->id }}">{{ $perdir->nomor }}</option>
               @endforeach
             </select>
+          </div>
+          <div class="col-md-1">
+            <button type="button" class="btn btn-sm btn-secondary" name="add_relation" id="add_relation">+</button>
           </div>
         </div>
 
@@ -187,6 +190,36 @@ jQuery(document).ready(function() {
   $(function () {
     $('#tanggal_terbit').datetimepicker({
       format: 'Y-MM-D',
+    });
+
+    var html = '\
+    <div id="relation_section>\
+    <br><br>\
+    <div class="col-md-4">\
+    </div>\
+    <div class="col-md-2">\
+    <select name="id_relation" class="form-control" id="id_relation">\
+    <option>Hubungan</option>\
+    @foreach($perdir_relation_masters as $perdir_relation_master)\
+    <option value="{{ $perdir_relation_master->id }}">{{ $perdir_relation_master->nama }}</option>\
+    @endforeach\
+    </select>\
+    </div>\
+    <div class="col-md-3">\
+    <select name="perdir" class="form-control" id="perdir">\
+    @foreach($perdirs as $perdir)\
+    <option value="{{ $perdir->id }}">{{ $perdir->nomor }}</option>\
+    @endforeach\
+    </select>\
+    </div>\
+    <div class="col-md-1">\
+      <button type="button" class="btn btn-sm btn-danger" name="cut_relation" id="cut_relation">-</button>\
+    </div>\
+    </div>\
+    '
+
+    $('#add_relation').click(function(){
+      $('#div_relation').append(html).hide().fadeIn(1000);
     });
   });
 });
