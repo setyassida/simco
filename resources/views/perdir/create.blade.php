@@ -1,9 +1,9 @@
-@extends('layouts.base')
+@extends('layouts.master')
 @section('content')
 <div class="container-fluid">
 
   <!-- Page Heading -->
-  <h1 class="h3 mb-4 text-gray-800">Tambah Peraturan Direksi</h1>
+  <!-- <h1 class="h3 mb-4 text-gray-800">Tambah Peraturan Direksi</h1> -->
 
   <!-- DataTales Example -->
   <div class="card shadow mb-4">
@@ -16,8 +16,8 @@
       </a>
     </div>
     <div class="card-body">
-      <h1 class="h3 mb-4 text-gray-800 text-center">Data Peraturan Direksi</h1>
-      <form class="user" action="{{ route('perdir.store') }}" method="post">
+      <h1 class="h3 mb-4 text-gray-800 text-center">Tambah Data Peraturan Direksi</h1>
+      <form class="user" action="{{ route('perdir.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
           <label for="nomor" class="col-md-4 col-form-label text-md-right">{{ __('Nomor') }}</label>
@@ -86,7 +86,17 @@
             </select>
           </div>
         </div>
-
+        <div class="form-group row">
+          <label class="col-md-4 col-form-label text-md-right" for="jenis">Perdir Induk</label>
+          <div class="col-md-6">
+            <select name="perdir" class="form-control" id="perdir">
+              <option value="">Choose</option>
+              @foreach($perdirs as $perdir)
+              <option value="{{ $perdir->id }}">{{ $perdir->nomor }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
         <div class="form-group row">
           <label class="col-md-4 col-form-label text-md-right" for="perihal">Perihal</label>
           <div class="col-md-6">
@@ -125,36 +135,6 @@
         </div>
 
         <br>
-        <hr>
-        <br>
-        <h1 class="h3 mb-4 text-gray-800 text-center">Hubungan dengan Peraturan Direksi Lain</h1>
-
-
-        <div class="form-group row" id="div_relation">
-          <div class="col-md-4">
-
-          </div>
-          <div class="col-md-2">
-            <select name="id_relation" class="form-control" id="id_relation">
-              <option>Hubungan</option>
-              @foreach($perdir_relation_masters as $perdir_relation_master)
-              <option value="{{ $perdir_relation_master->id }}">{{ $perdir_relation_master->nama }}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select name="perdir" class="form-control" id="perdir">
-              @foreach($perdirs as $perdir)
-              <option value="{{ $perdir->id }}">{{ $perdir->nomor }}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col-md-1">
-            <button type="button" class="btn btn-sm btn-secondary" name="add_relation" id="add_relation">+</button>
-          </div>
-        </div>
-
-        <br>
         <div class="form-group row mb-0">
           <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-sm btn-success">
@@ -167,23 +147,8 @@
   </div>
 
 </div>
-
-<!-- Bootstrap core JavaScript-->
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-<!-- Core plugin JavaScript-->
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
-
-<script src="{{ asset('js/momment.js') }}"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+@endsection
+@section('page_script')
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
@@ -192,34 +157,15 @@ jQuery(document).ready(function() {
       format: 'Y-MM-D',
     });
 
-    var html = '\
-    <div id="relation_section>\
-    <br><br>\
-    <div class="col-md-4">\
-    </div>\
-    <div class="col-md-2">\
-    <select name="id_relation" class="form-control" id="id_relation">\
-    <option>Hubungan</option>\
-    @foreach($perdir_relation_masters as $perdir_relation_master)\
-    <option value="{{ $perdir_relation_master->id }}">{{ $perdir_relation_master->nama }}</option>\
-    @endforeach\
-    </select>\
-    </div>\
-    <div class="col-md-3">\
-    <select name="perdir" class="form-control" id="perdir">\
-    @foreach($perdirs as $perdir)\
-    <option value="{{ $perdir->id }}">{{ $perdir->nomor }}</option>\
-    @endforeach\
-    </select>\
-    </div>\
-    <div class="col-md-1">\
-      <button type="button" class="btn btn-sm btn-danger" name="cut_relation" id="cut_relation">-</button>\
-    </div>\
-    </div>\
-    '
-
-    $('#add_relation').click(function(){
-      $('#div_relation').append(html).hide().fadeIn(1000);
+    $('#perdir').prop( "disabled", true );
+    $('#jenis').change(function(){
+      var jenis = $('#jenis').val();
+      if (jenis==2) {
+        $('#perdir').prop( "disabled", false );
+      }else {
+        $('#perdir').val("");
+        $('#perdir').prop( "disabled", true );
+      }
     });
   });
 });

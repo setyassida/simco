@@ -20,3 +20,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('perdirjenis','PerdirJenisController');
 Route::resource('perdir','PerdirController');
+
+Route::resource('masterArea','MasterAreaController');

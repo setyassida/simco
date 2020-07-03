@@ -20,7 +20,7 @@ class PerdirController extends Controller
   public function index()
   {
     $datas = ModelPerdir::orderBy('tanggal_terbit')->get();
-    return view('perdir/perdir', ['datas' => $datas]);
+    return view('perdir.index', ['datas' => $datas]);
   }
 
   /**
@@ -35,7 +35,7 @@ class PerdirController extends Controller
     $perdirs = DB::table('perdirs')->get();
     $perdir_jenis = DB::table('perdir_jenis')->get();
 
-    return view('perdir/perdir_create', ['areas' => $areas, 'perdir_relation_masters' => $perdir_relation_masters, 'perdirs' => $perdirs, 'perdir_jenis' => $perdir_jenis]);
+    return view('perdir.create', ['areas' => $areas, 'perdir_relation_masters' => $perdir_relation_masters, 'perdirs' => $perdirs, 'perdir_jenis' => $perdir_jenis]);
   }
 
   /**
@@ -46,12 +46,25 @@ class PerdirController extends Controller
   */
   public function store(Request $request)
   {
+    // dd($request->file('file_pdf'));
+    $file_pdf = $request->file('file_pdf');
+    $file_doc = $request->file('file_doc');
+    $file_ppt = $request->file('file_ppt');
+
+    $destination_pdf = 'uploads/perdir/pdf';
+	  $file_pdf->move($destination_pdf, $file_pdf->getClientOriginalName());
+
+    $destination_doc = 'uploads/perdir/doc';
+    $file_doc->move($destination_doc, $file_doc->getClientOriginalName());
+
+    $destination_ppt = 'uploads/perdir/ppt';
+    $file_ppt->move($destination_ppt, $file_ppt->getClientOriginalName());
 
     $data_perdir_detail = new ModelPerdirDetail();
     $data_perdir_detail->perihal = $request->perihal;
-    $data_perdir_detail->file_doc = null;
-    $data_perdir_detail->file_ppt = null;
-    $data_perdir_detail->file_pdf = null;
+    $data_perdir_detail->file_doc = $file_doc->getClientOriginalName();
+    $data_perdir_detail->file_ppt = $file_ppt->getClientOriginalName();
+    $data_perdir_detail->file_pdf = $file_pdf->getClientOriginalName();
     $data_perdir_detail->save();
 
     $data_perdir = new ModelPerdir();
@@ -62,9 +75,11 @@ class PerdirController extends Controller
     $data_perdir->id_areas = $request->area;
     $data_perdir->id_perdir_jenis = $request->jenis;
     $data_perdir->id_perdir_details = $data_perdir_detail->id;
+    $data_perdir->induk_id =  $request->perdir;
+
     $data_perdir->save();
 
-    return redirect()->route('perdir.index')->with('alert-success', 'Berhasil Menambahkan Data!');
+    return redirect('perdir')->with('flash_message', 'Data Peraturan Direksi berhasil ditambahkan');
   }
 
   /**
